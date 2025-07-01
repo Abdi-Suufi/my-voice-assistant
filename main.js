@@ -75,16 +75,18 @@ function startWakeWordDetection() {
 
     micProcess.on('data', (data) => {
       if (!porcupine) return;
-      console.log('Received audio data:', data.length);
+
       const frameLength = porcupine.frameLength;
       const int16Array = new Int16Array(data.buffer, data.byteOffset, data.length / 2);
+
       for (let i = 0; i + frameLength <= int16Array.length; i += frameLength) {
         const frame = int16Array.slice(i, i + frameLength);
         const keywordIndex = porcupine.process(frame);
-        console.log('Processed frame, keywordIndex:', keywordIndex);
+
         if (keywordIndex >= 0) {
           console.log('Wake word detected!');
           showOverlayWindow();
+          break; // Exit the loop immediately after detection
         }
       }
     });
@@ -147,4 +149,8 @@ ipcMain.on('close-overlay', () => {
   if (overlayWindow && !overlayWindow.isDestroyed()) {
     overlayWindow.close();
   }
+});
+
+ipcMain.handle('get-gemini-api-key', () => {
+  return process.env.GEMINI_API_KEY;
 });

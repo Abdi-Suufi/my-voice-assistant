@@ -57,8 +57,9 @@ function processUserMessage(text) {
 }
 
 async function callGeminiAPI() {
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-    
+    const apiKey = await window.electronAPI.getGeminiApiKey();
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
     const requestBody = {
       contents: history.map(item => ({ role: item.role, parts: item.parts })),
       generationConfig: { temperature: 0.8, maxOutputTokens: 256 }
@@ -99,8 +100,22 @@ function resetInactivityTimer() {
 }
 
 // --- Initial Load ---
-window.onload = () => {
-    addMessage(history[0].parts[0].text, 'model');
-    recognition.start();
-    resetInactivityTimer();
+window.onload = async () => {
+    try {
+        const apiKey = await window.electronAPI.getGeminiApiKey();
+        if (!apiKey) {
+            throw new Error("API key is not configured.");
+        }
+        
+        // The API key is now correctly fetched and passed to the API call.
+        
+        addMessage(history[0].parts[0].text, 'model');
+        recognition.start();
+        resetInactivityTimer();
+
+    } catch (error) {
+        console.error('Initialization error:', error);
+        addMessage(`Error: ${error.message}. Please check your configuration.`, 'model');
+        statusDiv.textContent = 'Configuration Error!';
+    }
 };
