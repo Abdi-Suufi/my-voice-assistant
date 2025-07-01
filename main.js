@@ -89,7 +89,7 @@ function startWakeWordDetection() {
       }
     });
 
-    console.log('Listening for "Hey Pico"...');
+    console.log('Listening for "Picovoice"...');
   } catch (error) {
     console.error('Error starting wake word detection:', error);
   }
