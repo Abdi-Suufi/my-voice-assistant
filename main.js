@@ -59,7 +59,7 @@ function startWakeWordDetection() {
   try {
     porcupine = new Porcupine(
       process.env.PICOVOICE_ACCESS_KEY,
-      [path.join(__dirname, 'models', 'porcupine_windows.ppn')],
+      [path.join(__dirname, 'models', 'picovoice_windows.ppn')],
       [0.65] // Sensitivity
     );
 
@@ -74,12 +74,14 @@ function startWakeWordDetection() {
     });
 
     micProcess.on('data', (data) => {
-      // Convert Buffer to Int16Array
+      if (!porcupine) return;
+      console.log('Received audio data:', data.length);
       const frameLength = porcupine.frameLength;
       const int16Array = new Int16Array(data.buffer, data.byteOffset, data.length / 2);
       for (let i = 0; i + frameLength <= int16Array.length; i += frameLength) {
         const frame = int16Array.slice(i, i + frameLength);
         const keywordIndex = porcupine.process(frame);
+        console.log('Processed frame, keywordIndex:', keywordIndex);
         if (keywordIndex >= 0) {
           console.log('Wake word detected!');
           showOverlayWindow();
