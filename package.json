@@ -1,0 +1,18 @@
+{
+  "name": "my-voice-assistant",
+  "version": "1.0.0",
+  "description": "A desktop voice assistant powered by Electron and AI.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@picovoice/porcupine-node": "^3.0.2",
+    "dotenv": "^16.4.5",
+    "electron": "^31.0.0",
+    "node-mic-record": "^0.0.1"
+  }
+}
